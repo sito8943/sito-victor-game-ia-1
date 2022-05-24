@@ -1,0 +1,114 @@
+body {
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.title, .subtitle {
+    margin: auto;
+}
+.subtitle {
+    margin-bottom: 1rem;
+}
+
+.maze-content {
+    margin: auto;
+    position: relative;
+}
+
+.button-group {
+    display: flex;
+    margin: auto;
+}
+
+#btn_start, #reset, #timer {
+    margin: 1rem;
+    display: block;
+    height: 30px;
+    width: 100px;
+    border: none;
+    border-radius: 2px;
+    color: white;
+    font-weight: 600;
+}
+
+#timer {
+    padding-left: 10px;
+    color: black;
+    border: 1px solid black;
+}
+
+#btn_start.start {
+    background-color: rgb(13, 5, 165);
+}
+
+#btn_start.start:hover, #btn_start.start:focus {
+    background-color: rgb(41, 32, 216);
+}
+
+#btn_start.stop {
+    background-color: rgb(179, 6, 6);
+}
+
+#btn_start.stop:hover, #btn_start.stop:focus {
+    background-color: rgb(223, 30, 30);
+}
+
+#reset {
+    background-color: rgb(3, 136, 14);
+}
+
+#reset:hover, #reset:focus {
+    background-color: rgb(33, 184, 13);
+}
+
+#solver {
+    position: absolute;
+    background-color: #00000055;
+    left: 0;
+    top: 0;
+}
+
+#maze_solver div {
+    display: flex;
+}
+
+.cell_solver {
+    position: relative;
+    width: 16px;
+    height: 16px;
+}
+
+.cell_solver::after {
+    position: absolute;
+    left: 3px;
+    text-align: center;
+    text-shadow: 0 0 1px black;
+    font-size: .7em;
+    z-index: 10;
+}
+
+.cell_solver.current::after {
+    content: "\1F6B6" !important;
+}
+
+.cell_solver.path::after {
+    content: " ";
+    width: 10px;
+    height: 10px;
+    border-radius: 10px;
+    background-color: rgb(10, 230, 35);
+    top: 3px;
+    left: 3px;
+}
+
+.cell_solver.old::after {
+    content: " ";
+    width: 10px;
+    height: 10px;
+    border-radius: 10px;
+    background-color: rgb(209, 2, 2) !important;
+    top: 3px;
+    left: 3px;
+}
