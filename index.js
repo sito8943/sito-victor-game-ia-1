@@ -296,6 +296,10 @@ const isInTheDoor = () => {
   return false;
 };
 
+const dist_euclidean = (x, y, xk, yk) => {
+  return Math.abs(x - xk) + Math.abs(y - yk);
+};
+
 /**
  * It moves the current position to the next valid position, if there is no valid position, it moves to
  * the previous position.
@@ -352,7 +356,99 @@ const move = async (visited, visitedAlready) => {
     visitedAlready.push(current);
   }
 };
+const move_vic = async (visited, visitedAlready, target) => {
+  let cantMove = false;
+  let dir_move,
+    dist = 99999;
+  // going left first
+  console.log(`POSICION ${current[1]},${current[0]}`);
+  console.log(
+    `Left`,
+    dist_euclidean(current[1] - 1, current[0], target[1], target[0]),
+    dist
+  );
+  if (
+    validLeft(current[0], current[1]) &&
+    !visitedAlreadyValidation(visitedAlready, current[0], current[1] - 1) &&
+    dist_euclidean(current[1] - 1, current[0], target[1], target[0]) < dist
+  ) {
+    dist = dist_euclidean(current[1] - 1, current[0], target[1], target[0]);
+    dir_move = moveLeft;
+    console.log(`Dist: ${dist} direcion Left`);
+  }
+  // await moveLeft();
+  // going top
+  console.log(
+    `Top`,
+    dist_euclidean(current[1], current[0] - 1, target[1], target[0]),
+    dist
+  );
+  if (
+    validTop(current[0], current[1]) &&
+    !visitedAlreadyValidation(visitedAlready, current[0] - 1, current[1]) &&
+    dist_euclidean(current[1], current[0] - 1, target[1], target[0]) < dist
+  ) {
+    dist = dist_euclidean(current[1], current[0] - 1, target[1], target[0]);
+    dir_move = moveTop;
+    console.log(`Dist: ${dist} direcion Top`);
+  }
+  // await moveTop();
+  // going right
+  console.log(
+    `right`,
+    dist_euclidean(current[1] + 1, current[0], target[1], target[0]),
+    dist
+  );
+  if (
+    validRight(current[0], current[1]) &&
+    !visitedAlreadyValidation(visitedAlready, current[0], current[1] + 1) &&
+    dist_euclidean(current[1] + 1, current[0], target[1], target[0]) < dist
+  ) {
+    dist = dist_euclidean(current[1] + 1, current[0], target[1], target[0]);
+    dir_move = moveRight;
+    console.log(`Dist: ${dist} direcion Right`);
+  }
+  // await moveRight();
+  // going down
+  console.log(
+    "down",
+    dist_euclidean(current[1], current[0] + 1, target[1], target[0]),
+    dist
+  );
+  if (
+    validDown(current[0], current[1]) &&
+    !visitedAlreadyValidation(visitedAlready, current[0] + 1, current[1]) &&
+    dist_euclidean(current[1], current[0] + 1, target[1], target[0]) < dist
+  ) {
+    dist = dist_euclidean(current[1], current[0] + 1, target[1], target[0]);
+    dir_move = moveDown;
+    console.log(`Dist: ${dist} direcion Down`);
+  }
+  //     await moveDown();
+  if (dist === 99999) cantMove = true;
 
+  if (cantMove) {
+    visited.pop();
+    switch (whichNeighborIs(visited[visited.length - 1])) {
+      case "left":
+        await moveLeft();
+        break;
+      case "top":
+        await moveTop();
+        break;
+      case "right":
+        await moveRight();
+        break;
+      default:
+        await moveDown();
+        break;
+    }
+  } else {
+    await dir_move();
+    visited.push(current);
+    visitedAlready.push(current);
+  }
+};
 /**
  * If the current cell's y coordinate is one less than the neighbor's y coordinate, return 'left',
  * if the current cell's x coordinate is one less than the neighbor's x coordinate, return 'top',
@@ -377,7 +473,7 @@ async function solve_maze() {
   const visitedAlready = [];
 
   // looking for the key
-  while (!haveTheKey()) await move(visited, visitedAlready);
+  while (!haveTheKey()) await move_vic(visited, visitedAlready, key);
 
   // reset now looking for door
   visited.splice(0, visited.length);
@@ -386,7 +482,11 @@ async function solve_maze() {
   visitedAlready.push([...key]);
 
   // looking for the door
-  while (!isInTheDoor()) {
-    await move(visited, visitedAlready);
-  }
+  while (!isInTheDoor()) await move_vic(visited, visitedAlready, exit);
 }
+
+const visited = [...current];
+const visitedAlready = [];
+document.getElementById("step").onclick = async (e) => {
+  await move_vic(visited, visitedAlready, key);
+};
